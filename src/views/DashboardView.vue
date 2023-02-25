@@ -1,14 +1,24 @@
 <template>
-    <WeatherCardComponent></WeatherCardComponent>
+  <div>
+    <NavbarComponent></NavbarComponent>
+    <br>
+    <CityDropdownComponent></CityDropdownComponent>
+
+  </div>
 </template>
 
 <script>
-import WeatherCardComponent from '@/components/WeatherCardComponent.vue';
+import NavbarComponent from '@/components/NavbarComponent.vue';
+import CityDropdownComponent from '@/components/CityDropdownComponent.vue';
 
 export default {
   name: 'DashboardView',
   components: {
-    WeatherCardComponent
-  }
+    NavbarComponent,
+    CityDropdownComponent
+  },
+  data: () => ({
+    
+  }),
 }
 </script>
