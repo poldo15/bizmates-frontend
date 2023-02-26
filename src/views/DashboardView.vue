@@ -1,20 +1,20 @@
 <template>
-  <div>
-    <NavbarComponent></NavbarComponent>
-    <br>
-    <CityDropdownComponent></CityDropdownComponent>
-
-  </div>
+  <v-container fill-height>
+      <v-row justify="center" align="center">
+          <v-col cols="12" sm="12">
+            <CityDropdownComponent></CityDropdownComponent>
+          </v-col>
+      </v-row>
+  </v-container>
 </template>
 
 <script>
-import NavbarComponent from '@/components/NavbarComponent.vue';
 import CityDropdownComponent from '@/components/CityDropdownComponent.vue';
 
 export default {
   name: 'DashboardView',
   components: {
-    NavbarComponent,
+    // NavbarComponent,
     CityDropdownComponent
   },
   data: () => ({

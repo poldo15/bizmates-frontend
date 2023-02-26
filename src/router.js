@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-// import About from './views/AboutView.vue';
+// import PlacesInfo from './views/PlacesInfoView.vue';
 import Dashboard from './views/DashboardView.vue';
 
 Vue.use(Router);
@@ -13,9 +13,9 @@ const routes = [
         component: Dashboard,
     },
     // {
-    //     path: '/about',
-    //     name: 'About',
-    //     component: About,
+    //     path: '/information/:lat/:lon',
+    //     name: 'PlacesInfo',
+    //     component: PlacesInfo,
     // }
 ]
 

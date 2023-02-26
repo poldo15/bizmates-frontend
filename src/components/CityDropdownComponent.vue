@@ -1,27 +1,28 @@
 <template>
-    <v-container grid-list-md text-xs-center>
-        <v-row align="center">
+    <v-container fluid fill-height>
+        <v-row>
             <v-spacer></v-spacer>
             <v-col
-                class="d-flex"
-                cols="12"
-                sm="4"
+                class="d-flex justify-center"
+                cols="4"
+                sm="12"
+                md="6"
             >
-            <v-select
-                :items="cities"
-                :item-text="'city_name'"
-                :item-value="'city_name'"
-                label="Select City"
-                v-model="selectedCity"
-                v-on:change="selectCity"
-                dense
-                outlined
-                return-object
-            ></v-select>
+                <v-select
+                    :items="cities"
+                    :item-text="'city_name'"
+                    :item-value="'city_name'"
+                    label="Select City"
+                    v-model="selectedCity"
+                    v-on:change="selectCity"
+                    dense
+                    outlined
+                    return-object
+                ></v-select>
             </v-col>
             <v-spacer></v-spacer>
         </v-row>
-        
+            
         <v-row
             v-if="selectedCity != null"
         >
@@ -79,9 +80,16 @@ export default {
     }),
     methods: {
         selectCity() {
+            
             console.log("City name: ", this.selectedCity.city_name)
             console.log("Lat: ", this.selectedCity.lat)
             console.log("Lon: ", this.selectedCity.lon)
+            localStorage.removeItem("lat");
+            localStorage.removeItem("lon");
+
+            localStorage.setItem('lat', this.selectedCity.lat)
+            localStorage.setItem('lon', this.selectedCity.lon)
+
             this.forceRerender();
         },
         forceRerender() {
@@ -90,3 +98,13 @@ export default {
     }
 }
 </script>
+<style scoped>
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -100px;
+    width: 500px;
+}
+</style>

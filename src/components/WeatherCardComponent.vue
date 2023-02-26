@@ -1,134 +1,160 @@
 <template>
-    <v-row>
-        <v-spacer></v-spacer>
-        <v-col
-            cols="12"
-            md="6"
-            sm="6"
-        >
-            <v-card
-                class="mx-auto"
+    <v-container>
+        <v-row>
+            <v-spacer></v-spacer>
+            <v-col
+                cols="6"
+                lg="6"
+                md="12"
+                sm="12"
             >
-                <v-list-item two-line>
-                    <v-list-item-content>
-                        <v-list-item-title class="text-h5">
-                        {{ this.responseData.city.name }}
-                        </v-list-item-title>
-                        <!-- <v-list-item-subtitle>Mon, 12:30 PM, Mostly sunny</v-list-item-subtitle> -->
-                        <v-list-item-subtitle>{{ convertEpochTime(this.responseData.city.sunrise).format("MMMM D, YYYY") }}</v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>
+                <v-card>
+                    <v-list-item two-line>
+                        <v-list-item-content>
+                            <v-list-item-title class="text-h2">
+                                <b>{{ this.responseData.city.name }}</b>
+                            </v-list-item-title>                           
+                            <v-list-item-subtitle>{{ convertEpochTime(this.responseData.city.sunrise).format("MMMM D, YYYY") }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                            <v-btn color="primary" @click="goToInformation">
+                                Search for Places <v-icon
+                                    right
+                                    dark
+                                >
+                                    mdi-magnify
+                                </v-icon>
+                            </v-btn>
+                            <SearchPlacesComponent
+                                :dialog.sync = dialog
+                                @close-dialog="(dialog = false)"
+                                :cityName.sync= this.responseData.city.name
+                            ></SearchPlacesComponent>
+                        </v-list-item-action>
+                    </v-list-item>
 
-                <v-card-text>
                     <!-- SUNRISE -->
-                    <v-row align="center">
+                    <v-row align="center" class="mx-0">
                         <v-col
-                            class="text-h5"
                             cols="6"
                         >
-                        <v-list-item-subtitle>Sunrise</v-list-item-subtitle>
-                        {{ convertEpochTime(this.responseData.city.sunrise).format("hh:mm A") }}
+                            <div class="grey--text text-subtitle-1">Sunrise</div>
+                            <v-card-title>{{ convertEpochTime(this.responseData.city.sunrise).format("hh:mm A") }}</v-card-title>
                         </v-col>
                         <v-col cols="6">
-                        <v-img
-                            src="../assets/sunrise-icon.png"
-                            alt="Sunny image"
-                            width="92"
-                        ></v-img>
+                            <v-img
+                                src="../assets/sunrise-icon.png"
+                                alt="Sunny image"
+                                width="92"
+                            ></v-img>
                         </v-col>
                     </v-row>
                     <!-- SUNSET -->
-                    <v-row align="center">
+                    <v-row align="center" class="mx-0">
                         <v-col
-                            class="text-h5"
                             cols="6"
                         >
-                        <v-list-item-subtitle>Sunset</v-list-item-subtitle>
-                        {{ convertEpochTime(this.responseData.city.sunset).format("hh:mm A") }}
+                            <div class="grey--text text-subtitle-1">Sunset</div> 
+                            <v-card-title>{{ convertEpochTime(this.responseData.city.sunset).format("hh:mm A") }}</v-card-title>
                         </v-col>
                         <v-col cols="6">
-                        <v-img
-                            src="../assets/sunset-icon.png"
-                            alt="Sunny image"
-                            width="92"
-                        ></v-img>
+                            <v-img
+                                src="../assets/sunset-icon.png"
+                                alt="Sunny image"
+                                width="92"
+                            ></v-img>
                         </v-col>
                     </v-row>
-                </v-card-text>
+                    
+                    <v-container fluid>
+                        <v-expansion-panels accordion>
+                            <v-expansion-panel
+                                v-for="item in upcomingHours"
+                                :key="item.dt"
+                            >
+                                <v-expansion-panel-header>
+                                    <v-row align="center">
+                                        <v-col
+                                            cols="4"
+                                        >                                        
+                                            <h4>{{ convertEpochTime(item.dt).format("hh:mm A") }}</h4>
+                                            <p class="caption">{{ convertEpochTime(item.dt).format("MMMM D, YYYY") }}</p>
+                                        </v-col>
+                                        <v-col
+                                            cols="4"
+                                        >
+                                        <div></div>
+                                            {{ `${tempToC(item.main.temp) }` }}&deg;C / {{ `${tempToF(item.main.temp) }` }}&deg;F
+                                        </v-col>
+                                        <v-col
+                                            cols="4"
+                                        >
+                                            <img 
+                                                v-bind:src="getIcon(item.weather[0].icon)"
+                                                id="table_icon_img"
+                                            />
+                                        </v-col>
+                                    </v-row>
+                                </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    <v-simple-table dense>
+                                        <template v-slot:default>
+                                        <tbody>
+                                            <tr>
+                                                <td>Clouds</td>
+                                                <td>
+                                                    <v-icon>mdi-clouds</v-icon>
+                                                </td>
+                                                <td>
+                                                    {{ item.clouds.all }}%
+                                                </td>
+                                                <td>
+                                                    {{ capitalizeFirstLetter(item.weather[0].description) }}
+                                                </td>
+                                            </tr>
 
-                <v-list-item>
-                <v-list-item-icon>
-                    <v-icon>mdi-send</v-icon>
-                </v-list-item-icon>
-                <v-list-item-subtitle>23 km/h</v-list-item-subtitle>
-                </v-list-item>
-
-                <v-list-item>
-                <v-list-item-icon>
-                    <v-icon>mdi-cloud-download</v-icon>
-                </v-list-item-icon>
-                <v-list-item-subtitle>48%</v-list-item-subtitle>
-                </v-list-item>
-
-                <!-- <v-slider
-                v-model="time"
-                :max="6"
-                :tick-labels="labels"
-                class="mx-4"
-                ticks
-                ></v-slider> -->
-
-                <v-list class="transparent">
-                    <v-list-item
-                        v-for="item in upcomingHours"
-                        :key="item.dt"
-                    >
-                        <v-list-item-title>{{ convertEpochTime(item.dt).format("hh:mm A") }}</v-list-item-title>
-
-                        <v-list-item-icon>
-                            <v-img
-                                v-bind:src="getIcon(item.weather[0].icon)"
-                                alt="Sunny image"
-                            ></v-img>
-                        </v-list-item-icon>
-
-                        <v-list-item-subtitle class="text-right">
-                        {{ `${tempToC(item.main.temp) }` }}&deg;C/{{ `${tempToF(item.main.temp) }` }}&deg;F
-                        </v-list-item-subtitle>
-                        
-                    </v-list-item>
-                </v-list>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                <v-btn text>
-                    Full Report
-                </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-col>
-        <v-spacer></v-spacer>
-    </v-row>
+                                            <tr>
+                                                <td>Wind</td>
+                                                <td>
+                                                    <v-icon>mdi-tailwind</v-icon>
+                                                </td>
+                                                <td colspan="2">
+                                                    {{ item.wind.speed }} meter/sec
+                                                </td>                                        
+                                            </tr>
+                                        </tbody>
+                                        </template>
+                                    </v-simple-table>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                    </v-container>
+                </v-card>
+            </v-col>
+            <v-spacer></v-spacer>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
 import axios from 'axios';
 import config from '../config/config';
+import SearchPlacesComponent from './SearchPlacesComponent.vue';
 var moment = require("moment");
 
 export default {
     name: "WeatherCardComponent",
-    props: {
-        lon: Number,
-        lat: Number
+    components:{
+        SearchPlacesComponent
     },
+    props: ["lat", "lon"],
     data: () => ({
         config: config,
         axios: axios,
         moment: moment,
         responseData: null,
-        upcomingHours: {}
+        upcomingHours: {},
+        dialog: false,
     }),
     methods: {
         getWeather: function() {
@@ -145,20 +171,8 @@ export default {
             ).then((response) => {
                 
                 this.responseData = response.data;
-
-                let dateToday = this.convertEpochTime(response.data.city.sunrise).format("YYYY-MM-DD");
                 
-                const loopingDates = response.data.list.map((e) => {
-                    let datesAvailable = this.convertEpochTime(e.dt).format("YYYY-MM-DD");
-                
-                    if(dateToday == datesAvailable){
-                        return e
-                    }
-                })
-
-                this.upcomingHours = loopingDates.filter((e) => {
-                    return e !== undefined;
-                })
+                this.upcomingHours = response.data.list.slice(0, 8);
                 
             }).catch((err) => {
                 console.log(err)
@@ -171,7 +185,7 @@ export default {
         },
 
         getIcon: function(icon){
-            return "http://openweathermap.org/img/wn/"+icon+"@2x.png"
+            return "http://openweathermap.org/img/wn/"+icon+"@4x.png"
         },
 
         tempToC: function(temp){
@@ -180,6 +194,14 @@ export default {
 
         tempToF: function(temp){
             return (((temp-273.15)*1.8)+32).toFixed(2);
+        },
+
+        capitalizeFirstLetter: function (word){
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        },
+
+        goToInformation: function() {
+            this.dialog = true;
         }
     },
     mounted(){
@@ -188,7 +210,8 @@ export default {
 }
 </script>
 <style scoped>
-#weather_card{
-    background-image: linear-gradient(to bottom right, #8693AB , #BDD4E7);
+#table_icon_img{
+    max-width: 50px !important;
+    height: 50px;
 }
 </style>
